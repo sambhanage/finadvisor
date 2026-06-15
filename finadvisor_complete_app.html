@@ -1,0 +1,697 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-family:var(--font-sans);color:var(--color-text-primary);max-width:680px}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 0 12px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:14px}
+.logo{width:38px;height:38px;border-radius:10px;background:#1D9E75;display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;flex-shrink:0}
+.topbar h1{font-size:17px;font-weight:500}
+.topbar p{font-size:12px;color:var(--color-text-secondary)}
+.nav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.nb{padding:6px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);display:flex;align-items:center;gap:5px;transition:all .15s}
+.nb.on{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.nb:hover:not(.on){background:var(--color-background-secondary);color:var(--color-text-primary)}
+.pane{display:none}.pane.on{display:block}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.2rem;margin-bottom:12px}
+.sec-label{font-size:10px;font-weight:500;letter-spacing:.06em;color:var(--color-text-secondary);text-transform:uppercase;margin-bottom:8px}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center}
+.metric-v{font-size:20px;font-weight:500;color:#1D9E75}
+.metric-v.red{color:#A32D2D}
+.metric-l{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px}
+.pill-teal{background:#E1F5EE;color:#085041}
+.pill-blue{background:#E6F1FB;color:#0C447C}
+.pill-amber{background:#FAEEDA;color:#633806}
+.pill-red{background:#FCEBEB;color:#791F1F}
+.pill-purple{background:#EEEDFE;color:#3C3489}
+.chat-wrap{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:12px}
+.chat-msgs{min-height:200px;max-height:300px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--color-background-secondary)}
+.msg{max-width:86%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.55}
+.msg.bot{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);align-self:flex-start;border-radius:4px 10px 10px 10px}
+.msg.user{background:#1D9E75;color:#fff;align-self:flex-end;border-radius:10px 10px 4px 10px}
+.msg.thinking{color:var(--color-text-secondary);font-style:italic;align-self:flex-start}
+.chat-bar{display:flex;gap:8px;padding:8px;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.chat-bar input{flex:1;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 11px;font-size:13px;background:var(--color-background-secondary);color:var(--color-text-primary)}
+.chat-bar button{background:#1D9E75;color:#fff;border:none;border-radius:var(--border-radius-md);padding:7px 14px;font-size:13px;cursor:pointer}
+.chat-bar button:hover{background:#0F6E56}
+.src-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.chip{padding:4px 11px;border-radius:14px;font-size:11px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);transition:all .12s}
+.chip.on{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.chip.on-us{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.sugg{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.sugg button{font-size:11px;padding:4px 11px;border-radius:14px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:transparent;color:var(--color-text-secondary)}
+.sugg button:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.site-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.site-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;cursor:pointer;transition:border .12s}
+.site-card:hover{border-color:#1D9E75}
+.site-card.sel{border:1.5px solid #1D9E75;background:#E1F5EE}
+.site-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;margin-bottom:7px}
+.site-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.site-desc{font-size:11px;color:var(--color-text-secondary)}
+.row2{display:flex;gap:10px;margin-bottom:12px}
+.col{flex:1;min-width:0}
+.sl-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sl-row label{font-size:12px;color:var(--color-text-secondary);min-width:120px}
+.sl-row input{flex:1}
+.sl-row span{font-size:12px;font-weight:500;min-width:56px;text-align:right;color:var(--color-text-primary)}
+.res-box{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.stock-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stock-row:last-child{border-bottom:none}
+.stock-name{font-size:13px;font-weight:500}
+.stock-sub{font-size:11px;color:var(--color-text-secondary)}
+.stock-price{font-size:13px;font-weight:500;text-align:right}
+.up{color:#0F6E56}.dn{color:#A32D2D}
+.news-item{padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.news-item:last-child{border-bottom:none}
+.news-src{font-size:10px;color:#1D9E75;margin-bottom:3px;font-weight:500}
+.news-title{font-size:13px;font-weight:500;margin-bottom:3px}
+.news-meta{font-size:11px;color:var(--color-text-secondary)}
+.tab2{display:flex;gap:4px;margin-bottom:10px}
+.t2b{padding:5px 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:14px;cursor:pointer;background:transparent;color:var(--color-text-secondary)}
+.t2b.on{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.sub-pane{display:none}.sub-pane.on{display:block}
+.port-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.port-row:last-child{border-bottom:none}
+.port-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.port-name{font-size:13px;font-weight:500}
+.port-type{font-size:10px;color:var(--color-text-secondary)}
+.port-right{margin-left:auto;text-align:right}
+.port-val{font-size:13px;font-weight:500}
+.port-chg{font-size:11px}
+.add-btn{padding:6px 14px;border-radius:var(--border-radius-md);font-size:12px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:transparent;color:var(--color-text-secondary)}
+.add-btn:hover{background:var(--color-background-secondary)}
+.form-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.form-row input,.form-row select{padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-secondary);color:var(--color-text-primary);flex:1;min-width:80px}
+.green-btn{background:#1D9E75;color:#fff;border:none;border-radius:var(--border-radius-md);padding:6px 16px;font-size:12px;cursor:pointer}
+.green-btn:hover{background:#0F6E56}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cmp-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px}
+.cmp-card h3{font-size:13px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.cmp-card ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.cmp-card ul li{font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:5px}
+.cmp-card ul li::before{content:"✓";color:#1D9E75;font-weight:500}
+.links-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.link-item{display:flex;align-items:center;gap:7px;padding:8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-info);text-decoration:none}
+.link-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.watchlist-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.watchlist-row:last-child{border-bottom:none}
+.wl-name{font-size:13px;font-weight:500;flex:1}
+.wl-price{font-size:13px;font-weight:500}
+.alert-badge{font-size:10px;padding:2px 7px;border-radius:10px;background:#FAEEDA;color:#633806;margin-left:4px}
+.alert-badge.active{background:#E1F5EE;color:#085041}
+.education-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;margin-bottom:8px;cursor:pointer;transition:border .12s}
+.education-card:hover{border-color:#1D9E75}
+.edu-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.edu-desc{font-size:12px;color:var(--color-text-secondary)}
+.edu-meta{display:flex;gap:8px;margin-top:6px;align-items:center}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">FinAdvisor AI — complete financial research and analysis platform for Indian and US markets</h2>
+
+<div class="app">
+  <div class="topbar">
+    <div class="logo"><i class="ti ti-chart-candle" aria-hidden="true"></i></div>
+    <div>
+      <h1>FinAdvisor AI — India & US Markets</h1>
+      <p>Complete financial research, analysis & advisory platform</p>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:#1D9E75">● Live</span>
+      <span style="font-size:11px;color:var(--color-text-secondary)" id="clk"></span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nb on" onclick="nav('home',this)"><i class="ti ti-home" style="font-size:13px"></i>Dashboard</button>
+    <button class="nb" onclick="nav('ask',this)"><i class="ti ti-message-circle" style="font-size:13px"></i>Ask AI</button>
+    <button class="nb" onclick="nav('markets',this)"><i class="ti ti-chart-line" style="font-size:13px"></i>Markets</button>
+    <button class="nb" onclick="nav('portfolio',this)"><i class="ti ti-briefcase" style="font-size:13px"></i>Portfolio</button>
+    <button class="nb" onclick="nav('tools',this)"><i class="ti ti-tool" style="font-size:13px"></i>Tools</button>
+    <button class="nb" onclick="nav('sources',this)"><i class="ti ti-world" style="font-size:13px"></i>Sources</button>
+    <button class="nb" onclick="nav('learn',this)"><i class="ti ti-school" style="font-size:13px"></i>Learn</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="pane on" id="pane-home">
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-v" id="nifty-v">24,853</div><div class="metric-l">NIFTY 50 <span class="up" style="font-size:10px">+0.42%</span></div></div>
+      <div class="metric"><div class="metric-v" id="sensex-v">81,744</div><div class="metric-l">SENSEX <span class="up" style="font-size:10px">+0.38%</span></div></div>
+      <div class="metric"><div class="metric-v">5,304</div><div class="metric-l">S&P 500 <span class="dn" style="font-size:10px">-0.11%</span></div></div>
+      <div class="metric"><div class="metric-v">83.42</div><div class="metric-l">USD/INR</div></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Top movers today — NSE</div>
+      <div id="movers-list">
+        <div class="stock-row"><div><div class="stock-name">Reliance Industries</div><div class="stock-sub">RELIANCE · NSE</div></div><div class="stock-price"><div>₹2,847</div><div class="up" style="font-size:11px">+2.14%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Infosys</div><div class="stock-sub">INFY · NSE</div></div><div class="stock-price"><div>₹1,623</div><div class="up" style="font-size:11px">+1.87%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">HDFC Bank</div><div class="stock-sub">HDFCBANK · NSE</div></div><div class="stock-price"><div>₹1,754</div><div class="dn" style="font-size:11px">-0.63%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">TCS</div><div class="stock-sub">TCS · NSE</div></div><div class="stock-price"><div>₹3,941</div><div class="up" style="font-size:11px">+0.92%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Bajaj Finance</div><div class="stock-sub">BAJFINANCE · NSE</div></div><div class="stock-price"><div>₹7,214</div><div class="dn" style="font-size:11px">-1.21%</div></div></div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="col">
+        <div class="card">
+          <div class="sec-label">NIFTY 50 — 7 day trend</div>
+          <div style="position:relative;height:120px"><canvas id="niftyChart" role="img" aria-label="NIFTY 50 7-day trend line chart showing upward movement from 24400 to 24853">NIFTY trend: 24400, 24520, 24390, 24610, 24780, 24700, 24853</canvas></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <div class="sec-label">Market sentiment</div>
+          <div style="position:relative;height:120px"><canvas id="sentChart" role="img" aria-label="Market sentiment donut chart: Bullish 52%, Neutral 28%, Bearish 20%">Bullish 52, Neutral 28, Bearish 20</canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Latest market news</div>
+      <div class="news-item"><div class="news-src">Moneycontrol</div><div class="news-title">RBI holds repo rate at 6.5%, signals neutral stance ahead of budget</div><div class="news-meta">2h ago · Macro</div></div>
+      <div class="news-item"><div class="news-src">Economic Times</div><div class="news-title">FIIs turn buyers — net inflow of ₹4,200 Cr in last 3 sessions</div><div class="news-meta">4h ago · Markets</div></div>
+      <div class="news-item"><div class="news-src">Bloomberg</div><div class="news-title">Fed minutes show policymakers in no rush to cut rates further in 2025</div><div class="news-meta">5h ago · US Markets</div></div>
+      <div class="news-item"><div class="news-src">Reuters</div><div class="news-title">IT sector rally: Infosys, Wipro hit 52-week highs on strong Q4 guidance</div><div class="news-meta">6h ago · Sector</div></div>
+    </div>
+  </div>
+
+  <!-- ASK AI -->
+  <div class="pane" id="pane-ask">
+    <div class="card">
+      <div class="sec-label">Active sources — India</div>
+      <div class="src-chips" id="ind-chips">
+        <button class="chip on" onclick="tC(this)">Moneycontrol</button>
+        <button class="chip on" onclick="tC(this)">Economic Times</button>
+        <button class="chip on" onclick="tC(this)">NSE India</button>
+        <button class="chip" onclick="tC(this)">Screener.in</button>
+        <button class="chip" onclick="tC(this)">BSE India</button>
+        <button class="chip" onclick="tC(this)">ValueResearch</button>
+        <button class="chip" onclick="tC(this)">Groww</button>
+        <button class="chip" onclick="tC(this)">Zerodha</button>
+      </div>
+      <div class="sec-label" style="margin-top:8px">Active sources — US & Global</div>
+      <div class="src-chips">
+        <button class="chip on-us on" onclick="tC(this)">Bloomberg</button>
+        <button class="chip on-us" onclick="tC(this,'us')">Reuters</button>
+        <button class="chip on-us" onclick="tC(this,'us')">CNBC</button>
+        <button class="chip on-us" onclick="tC(this,'us')">Yahoo Finance</button>
+        <button class="chip on-us" onclick="tC(this,'us')">Seeking Alpha</button>
+        <button class="chip on-us" onclick="tC(this,'us')">TradingView</button>
+        <button class="chip on-us" onclick="tC(this,'us')">MarketWatch</button>
+        <button class="chip on-us" onclick="tC(this,'us')">Investing.com</button>
+      </div>
+    </div>
+
+    <div class="sec-label">Quick questions</div>
+    <div class="sugg">
+      <button onclick="fq(this)">Best NIFTY 50 stocks now?</button>
+      <button onclick="fq(this)">How to start SIP in 2025?</button>
+      <button onclick="fq(this)">US Fed rate impact on Indian market?</button>
+      <button onclick="fq(this)">Top mutual funds by 5-year returns?</button>
+      <button onclick="fq(this)">Tata Motors vs Maruti — which to buy?</button>
+      <button onclick="fq(this)">What is SEBI's latest regulation?</button>
+      <button onclick="fq(this)">Explain P/E ratio with Indian stocks</button>
+      <button onclick="fq(this)">Best IT stocks for long term?</button>
+    </div>
+
+    <div class="chat-wrap">
+      <div class="chat-msgs" id="msgs">
+        <div class="msg bot">Hello! I am your FinAdvisor AI — trained on insights from Moneycontrol, Economic Times, Bloomberg, Reuters, Screener.in, NSE/BSE and more. Ask me anything about Indian or US markets: stock analysis, mutual funds, NIFTY trends, SIP planning, or global macro events. Select your preferred sources above.</div>
+      </div>
+      <div class="chat-bar">
+        <input type="text" id="qi" placeholder="Ask about any stock, fund, or market trend..." onkeydown="if(event.key==='Enter')sendQ()"/>
+        <button onclick="sendQ()"><i class="ti ti-send" style="font-size:14px"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKETS -->
+  <div class="pane" id="pane-markets">
+    <div class="tab2">
+      <button class="t2b on" onclick="mTab('india',this)">India</button>
+      <button class="t2b" onclick="mTab('us',this)">US & Global</button>
+      <button class="t2b" onclick="mTab('watchlist',this)">Watchlist</button>
+    </div>
+
+    <div class="sub-pane on" id="mp-india">
+      <div class="card">
+        <div class="sec-label">Indices — NSE / BSE</div>
+        <div class="stock-row"><div><div class="stock-name">NIFTY 50</div><div class="stock-sub">National Stock Exchange</div></div><div class="stock-price"><div>24,853.15</div><div class="up" style="font-size:11px">+104.20 (+0.42%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">NIFTY Bank</div><div class="stock-sub">NSE Banking Index</div></div><div class="stock-price"><div>52,714.40</div><div class="up" style="font-size:11px">+287.60 (+0.55%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">SENSEX</div><div class="stock-sub">Bombay Stock Exchange</div></div><div class="stock-price"><div>81,744.25</div><div class="up" style="font-size:11px">+308.55 (+0.38%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">NIFTY IT</div><div class="stock-sub">IT Sector Index</div></div><div class="stock-price"><div>37,821.80</div><div class="up" style="font-size:11px">+521.40 (+1.40%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">NIFTY Midcap 100</div><div class="stock-sub">Mid cap index</div></div><div class="stock-price"><div>54,218.55</div><div class="dn" style="font-size:11px">-142.30 (-0.26%)</div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-label">Top NSE stocks by volume today</div>
+        <div class="stock-row"><div><div class="stock-name">Reliance Industries</div><div class="stock-sub">RELIANCE</div></div><div class="stock-price"><div>₹2,847</div><div class="up" style="font-size:11px">+2.14%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Infosys</div><div class="stock-sub">INFY</div></div><div class="stock-price"><div>₹1,623</div><div class="up" style="font-size:11px">+1.87%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">HDFC Bank</div><div class="stock-sub">HDFCBANK</div></div><div class="stock-price"><div>₹1,754</div><div class="dn" style="font-size:11px">-0.63%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Adani Ports</div><div class="stock-sub">ADANIPORTS</div></div><div class="stock-price"><div>₹1,312</div><div class="up" style="font-size:11px">+1.32%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">ITC</div><div class="stock-sub">ITC</div></div><div class="stock-price"><div>₹456</div><div class="dn" style="font-size:11px">-0.44%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Wipro</div><div class="stock-sub">WIPRO</div></div><div class="stock-price"><div>₹498</div><div class="up" style="font-size:11px">+2.61%</div></div></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-label">Top mutual funds — 1yr return</div>
+        <div class="stock-row"><div><div class="stock-name">Parag Parikh Flexi Cap</div><div class="stock-sub">Direct Growth</div></div><div class="stock-price"><div style="font-size:12px"><span class="pill pill-teal">28.4% 1yr</span></div><div class="up" style="font-size:11px">5★ ValueResearch</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Mirae Asset Large Cap</div><div class="stock-sub">Direct Growth</div></div><div class="stock-price"><div style="font-size:12px"><span class="pill pill-teal">22.1% 1yr</span></div><div class="up" style="font-size:11px">5★</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">SBI Small Cap Fund</div><div class="stock-sub">Direct Growth</div></div><div class="stock-price"><div style="font-size:12px"><span class="pill pill-teal">34.7% 1yr</span></div><div class="up" style="font-size:11px">4★</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Axis Bluechip Fund</div><div class="stock-sub">Direct Growth</div></div><div class="stock-price"><div style="font-size:12px"><span class="pill pill-teal">18.9% 1yr</span></div><div class="up" style="font-size:11px">4★</div></div></div>
+      </div>
+    </div>
+
+    <div class="sub-pane" id="mp-us">
+      <div class="card">
+        <div class="sec-label">US & Global indices</div>
+        <div class="stock-row"><div><div class="stock-name">S&P 500</div><div class="stock-sub">NYSE + NASDAQ combined</div></div><div class="stock-price"><div>5,304.72</div><div class="dn" style="font-size:11px">-5.85 (-0.11%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">NASDAQ 100</div><div class="stock-sub">Technology weighted</div></div><div class="stock-price"><div>18,674.35</div><div class="up" style="font-size:11px">+44.10 (+0.24%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Dow Jones</div><div class="stock-sub">DJIA 30 stocks</div></div><div class="stock-price"><div>39,512.84</div><div class="dn" style="font-size:11px">-87.20 (-0.22%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">USD/INR</div><div class="stock-sub">Currency pair</div></div><div class="stock-price"><div>83.42</div><div class="dn" style="font-size:11px">-0.08 (-0.10%)</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Gold (MCX)</div><div class="stock-sub">₹/10g futures</div></div><div class="stock-price"><div>₹72,840</div><div class="up" style="font-size:11px">+0.34%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Brent Crude</div><div class="stock-sub">$/barrel</div></div><div class="stock-price"><div>$83.17</div><div class="dn" style="font-size:11px">-0.52%</div></div></div>
+      </div>
+      <div class="card">
+        <div class="sec-label">US mega cap stocks</div>
+        <div class="stock-row"><div><div class="stock-name">Apple Inc.</div><div class="stock-sub">AAPL · NASDAQ</div></div><div class="stock-price"><div>$189.30</div><div class="up" style="font-size:11px">+0.84%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Microsoft</div><div class="stock-sub">MSFT · NASDAQ</div></div><div class="stock-price"><div>$415.72</div><div class="up" style="font-size:11px">+1.12%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">NVIDIA</div><div class="stock-sub">NVDA · NASDAQ</div></div><div class="stock-price"><div>$897.54</div><div class="up" style="font-size:11px">+2.31%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Alphabet (Google)</div><div class="stock-sub">GOOGL · NASDAQ</div></div><div class="stock-price"><div>$174.21</div><div class="dn" style="font-size:11px">-0.41%</div></div></div>
+        <div class="stock-row"><div><div class="stock-name">Amazon</div><div class="stock-sub">AMZN · NASDAQ</div></div><div class="stock-price"><div>$185.45</div><div class="up" style="font-size:11px">+0.67%</div></div></div>
+      </div>
+    </div>
+
+    <div class="sub-pane" id="mp-watchlist">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sec-label" style="margin-bottom:0">My watchlist</div>
+          <button class="add-btn" onclick="addWatchPrompt()"><i class="ti ti-plus" style="font-size:12px"></i> Add stock</button>
+        </div>
+        <div id="wl-list">
+          <div class="watchlist-row"><div class="wl-name">RELIANCE <span class="alert-badge active">Alert set</span></div><div class="wl-price up">₹2,847 <span style="font-size:11px">+2.14%</span></div></div>
+          <div class="watchlist-row"><div class="wl-name">INFY</div><div class="wl-price up">₹1,623 <span style="font-size:11px">+1.87%</span></div></div>
+          <div class="watchlist-row"><div class="wl-name">TCS <span class="alert-badge">Set alert</span></div><div class="wl-price up">₹3,941 <span style="font-size:11px">+0.92%</span></div></div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <input type="text" id="wl-input" placeholder="Add symbol e.g. HDFCBANK" style="flex:1;padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-secondary);color:var(--color-text-primary)"/>
+          <button class="green-btn" onclick="addToWatchlist()">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTFOLIO -->
+  <div class="pane" id="pane-portfolio">
+    <div class="metric-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metric"><div class="metric-v" id="port-total">₹4.82L</div><div class="metric-l">Total value</div></div>
+      <div class="metric"><div class="metric-v up" id="port-gain">+₹62,400</div><div class="metric-l">Total gain</div></div>
+      <div class="metric"><div class="metric-v up">+14.9%</div><div class="metric-l">Overall return</div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="sec-label" style="margin-bottom:0">Holdings</div>
+        <button class="add-btn" onclick="showAddForm()"><i class="ti ti-plus" style="font-size:12px"></i> Add holding</button>
+      </div>
+      <div id="holdings">
+        <div class="port-row"><div class="port-icon" style="background:#E1F5EE;color:#085041">RL</div><div><div class="port-name">Reliance Industries</div><div class="port-type">10 shares · Equity · NSE</div></div><div class="port-right"><div class="port-val">₹28,470</div><div class="port-chg up" style="font-size:11px">+₹3,120 (+12.3%)</div></div></div>
+        <div class="port-row"><div class="port-icon" style="background:#E6F1FB;color:#0C447C">IF</div><div><div class="port-name">Infosys</div><div class="port-type">15 shares · Equity · NSE</div></div><div class="port-right"><div class="port-val">₹24,345</div><div class="port-chg up" style="font-size:11px">+₹2,870 (+13.4%)</div></div></div>
+        <div class="port-row"><div class="port-icon" style="background:#EEEDFE;color:#3C3489">PP</div><div><div class="port-name">Parag Parikh Flexi Cap</div><div class="port-type">MF · Direct Growth · ₹10,000 SIP</div></div><div class="port-right"><div class="port-val">₹1,42,300</div><div class="port-chg up" style="font-size:11px">+₹32,300 (+29.4%)</div></div></div>
+        <div class="port-row"><div class="port-icon" style="background:#FAEEDA;color:#633806">SB</div><div><div class="port-name">SBI Small Cap Fund</div><div class="port-type">MF · Direct Growth · ₹5,000 SIP</div></div><div class="port-right"><div class="port-val">₹87,650</div><div class="port-chg up" style="font-size:11px">+₹17,650 (+25.2%)</div></div></div>
+        <div class="port-row"><div class="port-icon" style="background:#EAF3DE;color:#3B6D11">HD</div><div><div class="port-name">HDFC Bank</div><div class="port-type">20 shares · Equity · NSE</div></div><div class="port-right"><div class="port-val">₹35,080</div><div class="port-chg dn" style="font-size:11px">-₹1,820 (-4.9%)</div></div></div>
+      </div>
+      <div id="add-form" style="display:none;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary)">
+        <div class="form-row">
+          <input type="text" id="h-name" placeholder="Stock / Fund name"/>
+          <input type="text" id="h-sym" placeholder="Symbol"/>
+        </div>
+        <div class="form-row">
+          <select id="h-type"><option>Equity</option><option>Mutual Fund</option><option>ETF</option><option>Gold</option><option>FD</option></select>
+          <input type="number" id="h-qty" placeholder="Qty / Units"/>
+          <input type="number" id="h-price" placeholder="Avg buy price (₹)"/>
+        </div>
+        <button class="green-btn" onclick="addHolding()">Add to portfolio</button>
+        <button class="add-btn" style="margin-left:6px" onclick="document.getElementById('add-form').style.display='none'">Cancel</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Asset allocation</div>
+      <div style="position:relative;height:160px"><canvas id="allocChart" role="img" aria-label="Asset allocation donut: Mutual Funds 48%, Equity 42%, Other 10%">Mutual Funds 48, Equity 42, Other 10</canvas></div>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="pane" id="pane-tools">
+    <div class="tab2">
+      <button class="t2b on" onclick="toolTab('sip',this)">SIP Calculator</button>
+      <button class="t2b" onclick="toolTab('lumpsum',this)">Lumpsum</button>
+      <button class="t2b" onclick="toolTab('emi',this)">EMI / Loan</button>
+      <button class="t2b" onclick="toolTab('tax',this)">Tax estimator</button>
+    </div>
+
+    <div class="sub-pane on" id="tp-sip">
+      <div class="card">
+        <div class="sl-row"><label>Monthly SIP (₹)</label><input type="range" min="500" max="100000" value="10000" step="500" id="s-amt" oninput="calcSip()"/><span id="s-amtv">₹10,000</span></div>
+        <div class="sl-row"><label>Expected return (%)</label><input type="range" min="6" max="24" value="12" step="1" id="s-rate" oninput="calcSip()"/><span id="s-ratev">12%</span></div>
+        <div class="sl-row"><label>Time period (years)</label><input type="range" min="1" max="30" value="10" step="1" id="s-yr" oninput="calcSip()"/><span id="s-yrv">10 yrs</span></div>
+        <div class="res-box">
+          <div class="metric"><div class="metric-v" id="s-corpus">₹23.2L</div><div class="metric-l">Final corpus</div></div>
+          <div class="metric"><div class="metric-v" id="s-inv">₹12.0L</div><div class="metric-l">Invested</div></div>
+          <div class="metric"><div class="metric-v up" id="s-gain">₹11.2L</div><div class="metric-l">Wealth gain</div></div>
+        </div>
+        <div style="position:relative;height:160px;margin-top:12px"><canvas id="sipChart" role="img" aria-label="SIP growth chart showing invested amount vs corpus over time">SIP growth chart</canvas></div>
+      </div>
+    </div>
+
+    <div class="sub-pane" id="tp-lumpsum">
+      <div class="card">
+        <div class="sl-row"><label>Lumpsum amount (₹)</label><input type="range" min="10000" max="5000000" value="100000" step="10000" id="l-amt" oninput="calcLump()"/><span id="l-amtv">₹1.0L</span></div>
+        <div class="sl-row"><label>Expected return (%)</label><input type="range" min="6" max="24" value="12" step="1" id="l-rate" oninput="calcLump()"/><span id="l-ratev">12%</span></div>
+        <div class="sl-row"><label>Time period (years)</label><input type="range" min="1" max="30" value="10" step="1" id="l-yr" oninput="calcLump()"/><span id="l-yrv">10 yrs</span></div>
+        <div class="res-box">
+          <div class="metric"><div class="metric-v" id="l-corpus">₹3.1L</div><div class="metric-l">Final corpus</div></div>
+          <div class="metric"><div class="metric-v" id="l-inv">₹1.0L</div><div class="metric-l">Invested</div></div>
+          <div class="metric"><div class="metric-v up" id="l-gain">₹2.1L</div><div class="metric-l">Gain</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-pane" id="tp-emi">
+      <div class="card">
+        <div class="sl-row"><label>Loan amount (₹)</label><input type="range" min="100000" max="10000000" value="2000000" step="50000" id="e-amt" oninput="calcEmi()"/><span id="e-amtv">₹20.0L</span></div>
+        <div class="sl-row"><label>Interest rate (%)</label><input type="range" min="6" max="20" value="9" step="0.5" id="e-rate" oninput="calcEmi()"/><span id="e-ratev">9.0%</span></div>
+        <div class="sl-row"><label>Tenure (years)</label><input type="range" min="1" max="30" value="20" step="1" id="e-yr" oninput="calcEmi()"/><span id="e-yrv">20 yrs</span></div>
+        <div class="res-box">
+          <div class="metric"><div class="metric-v" id="e-emi">₹18,001</div><div class="metric-l">Monthly EMI</div></div>
+          <div class="metric"><div class="metric-v" id="e-total">₹43.2L</div><div class="metric-l">Total payable</div></div>
+          <div class="metric"><div class="metric-v red" id="e-int">₹23.2L</div><div class="metric-l">Total interest</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-pane" id="tp-tax">
+      <div class="card">
+        <div class="sl-row"><label>Annual income (₹)</label><input type="range" min="250000" max="5000000" value="1200000" step="50000" id="t-inc" oninput="calcTax()"/><span id="t-incv">₹12.0L</span></div>
+        <div class="sl-row"><label>80C deduction (₹)</label><input type="range" min="0" max="150000" value="150000" step="5000" id="t-80c" oninput="calcTax()"/><span id="t-80cv">₹1.5L</span></div>
+        <div class="sl-row"><label>HRA exemption (₹)</label><input type="range" min="0" max="600000" value="120000" step="10000" id="t-hra" oninput="calcTax()"/><span id="t-hrav">₹1.2L</span></div>
+        <div class="res-box">
+          <div class="metric"><div class="metric-v" id="t-taxable">₹9.3L</div><div class="metric-l">Taxable income</div></div>
+          <div class="metric"><div class="metric-v red" id="t-tax">₹1.08L</div><div class="metric-l">Tax payable</div></div>
+          <div class="metric"><div class="metric-v" id="t-eff">9.0%</div><div class="metric-l">Effective rate</div></div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--color-text-secondary)">Based on new tax regime FY 2024-25. Consult a CA for precise computation.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="pane" id="pane-sources">
+    <div class="sec-label">India — financial platforms</div>
+    <div class="site-grid">
+      <div class="site-card sel" onclick="toggleSite(this)"><div class="site-icon" style="background:#E1F5EE;color:#085041">MC</div><div class="site-name">Moneycontrol</div><div class="site-desc">100M+ users/month · News + live data + MF</div><span class="pill pill-teal" style="margin-top:6px;display:inline-block">India #1</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#FAEEDA;color:#633806">ET</div><div class="site-name">Economic Times</div><div class="site-desc">World's 2nd largest financial daily</div><span class="pill pill-amber" style="margin-top:6px;display:inline-block">News</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#E6F1FB;color:#0C447C">NSE</div><div class="site-name">NSE India</div><div class="site-desc">Official exchange — real time prices</div><span class="pill pill-blue" style="margin-top:6px;display:inline-block">Exchange</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#EEEDFE;color:#3C3489">BSE</div><div class="site-name">BSE India</div><div class="site-desc">Bombay Stock Exchange · SENSEX</div><span class="pill pill-purple" style="margin-top:6px;display:inline-block">Exchange</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#E1F5EE;color:#085041">GR</div><div class="site-name">Groww</div><div class="site-desc">Largest by NSE active users 2025</div><span class="pill pill-teal" style="margin-top:6px;display:inline-block">Broker</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#FCEBEB;color:#791F1F">ZR</div><div class="site-name">Zerodha / Kite</div><div class="site-desc">Advanced trading + Varsity education</div><span class="pill pill-red" style="margin-top:6px;display:inline-block">Broker</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#EAF3DE;color:#3B6D11">SC</div><div class="site-name">Screener.in</div><div class="site-desc">Fundamental analysis, ratios, P&L</div><span class="pill pill-teal" style="margin-top:6px;display:inline-block">Research</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#FAEEDA;color:#633806">VR</div><div class="site-name">ValueResearch</div><div class="site-desc">Mutual fund ratings and star rankings</div><span class="pill pill-amber" style="margin-top:6px;display:inline-block">MF Research</span></div>
+    </div>
+
+    <div class="sec-label" style="margin-top:10px">US & Global — financial platforms</div>
+    <div class="site-grid">
+      <div class="site-card sel" onclick="toggleSite(this)"><div class="site-icon" style="background:#E6F1FB;color:#0C447C">BB</div><div class="site-name">Bloomberg</div><div class="site-desc">Global premium financial news leader</div><span class="pill pill-blue" style="margin-top:6px;display:inline-block">US #1</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#FCEBEB;color:#791F1F">CN</div><div class="site-name">CNBC</div><div class="site-desc">Live TV + breaking market news</div><span class="pill pill-red" style="margin-top:6px;display:inline-block">News + TV</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#EEEDFE;color:#3C3489">RE</div><div class="site-name">Reuters</div><div class="site-desc">Breaking global wire service</div><span class="pill pill-purple" style="margin-top:6px;display:inline-block">Wire</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#EAF3DE;color:#3B6D11">YF</div><div class="site-name">Yahoo Finance</div><div class="site-desc">Free data powerhouse · screeners</div><span class="pill pill-teal" style="margin-top:6px;display:inline-block">Free Data</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#FAEEDA;color:#633806">MW</div><div class="site-name">MarketWatch</div><div class="site-desc">WSJ group — analysis + commentary</div><span class="pill pill-amber" style="margin-top:6px;display:inline-block">Analysis</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#E1F5EE;color:#085041">IV</div><div class="site-name">Investing.com</div><div class="site-desc">Charts + screeners + economic calendar</div><span class="pill pill-teal" style="margin-top:6px;display:inline-block">Data</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#E6F1FB;color:#0C447C">SA</div><div class="site-name">Seeking Alpha</div><div class="site-desc">Crowdsourced deep-dive analysis</div><span class="pill pill-blue" style="margin-top:6px;display:inline-block">Analysis</span></div>
+      <div class="site-card" onclick="toggleSite(this)"><div class="site-icon" style="background:#EEEDFE;color:#3C3489">TV</div><div class="site-name">TradingView</div><div class="site-desc">Best charting — India + US + Forex</div><span class="pill pill-purple" style="margin-top:6px;display:inline-block">Charts</span></div>
+    </div>
+
+    <div class="sec-label" style="margin-top:10px">Quick links — open in browser</div>
+    <div class="links-grid">
+      <a href="https://www.moneycontrol.com" class="link-item"><div class="link-icon" style="background:#E1F5EE;color:#085041">MC</div>Moneycontrol</a>
+      <a href="https://economictimes.indiatimes.com/markets" class="link-item"><div class="link-icon" style="background:#FAEEDA;color:#633806">ET</div>ET Markets</a>
+      <a href="https://www.nseindia.com" class="link-item"><div class="link-icon" style="background:#E6F1FB;color:#0C447C">NS</div>NSE India</a>
+      <a href="https://www.screener.in" class="link-item"><div class="link-icon" style="background:#EAF3DE;color:#3B6D11">SC</div>Screener.in</a>
+      <a href="https://www.valueresearchonline.com" class="link-item"><div class="link-icon" style="background:#FAEEDA;color:#633806">VR</div>ValueResearch</a>
+      <a href="https://kite.zerodha.com" class="link-item"><div class="link-icon" style="background:#FCEBEB;color:#791F1F">ZR</div>Zerodha Kite</a>
+      <a href="https://finance.yahoo.com" class="link-item"><div class="link-icon" style="background:#EAF3DE;color:#3B6D11">YF</div>Yahoo Finance</a>
+      <a href="https://www.tradingview.com" class="link-item"><div class="link-icon" style="background:#EEEDFE;color:#3C3489">TV</div>TradingView</a>
+      <a href="https://www.bloomberg.com/markets" class="link-item"><div class="link-icon" style="background:#E6F1FB;color:#0C447C">BB</div>Bloomberg</a>
+      <a href="https://www.investing.com" class="link-item"><div class="link-icon" style="background:#E1F5EE;color:#085041">IN</div>Investing.com</a>
+    </div>
+  </div>
+
+  <!-- LEARN -->
+  <div class="pane" id="pane-learn">
+    <div class="sec-label">Financial education — AI explained</div>
+    <div class="education-card" onclick="learnTopic('What is SIP and how does Systematic Investment Plan work in India? Explain with an example for a beginner investor.')">
+      <div class="edu-title">What is SIP? — beginner guide</div>
+      <div class="edu-desc">Systematic Investment Plans — how they work, benefits, and how to start in India</div>
+      <div class="edu-meta"><span class="pill pill-teal">Beginner</span><span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px"><i class="ti ti-clock" style="font-size:11px"></i> 3 min read</span></div>
+    </div>
+    <div class="education-card" onclick="learnTopic('Explain P/E ratio (Price to Earnings) with examples using real Indian stocks like Reliance, TCS and Infosys. What is a good P/E ratio for Indian markets?')">
+      <div class="edu-title">Understanding P/E ratio with Indian stocks</div>
+      <div class="edu-desc">How to read and compare P/E ratios for NSE-listed companies</div>
+      <div class="edu-meta"><span class="pill pill-blue">Intermediate</span><span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px"><i class="ti ti-clock" style="font-size:11px"></i> 5 min read</span></div>
+    </div>
+    <div class="education-card" onclick="learnTopic('How does US Federal Reserve interest rate decisions affect Indian stock market, rupee value, and FII flows? Explain the mechanism clearly.')">
+      <div class="edu-title">How US Fed rates affect Indian markets</div>
+      <div class="edu-desc">The connection between Fed policy, FII flows, USD/INR and NIFTY</div>
+      <div class="edu-meta"><span class="pill pill-blue">Intermediate</span><span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px"><i class="ti ti-clock" style="font-size:11px"></i> 6 min read</span></div>
+    </div>
+    <div class="education-card" onclick="learnTopic('Explain fundamental analysis vs technical analysis for stock picking in the Indian market. Which approach is better for long-term investors vs traders?')">
+      <div class="edu-title">Fundamental vs technical analysis</div>
+      <div class="edu-desc">Which approach works better for Indian markets — and when to use each</div>
+      <div class="edu-meta"><span class="pill pill-amber">Advanced</span><span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px"><i class="ti ti-clock" style="font-size:11px"></i> 8 min read</span></div>
+    </div>
+    <div class="education-card" onclick="learnTopic('How to read a company balance sheet and annual report to evaluate if a stock is worth buying? Use an Indian company example like HDFC Bank or Infosys.')">
+      <div class="edu-title">How to read a company balance sheet</div>
+      <div class="edu-desc">Decode annual reports, assets, liabilities and what matters for investors</div>
+      <div class="edu-meta"><span class="pill pill-amber">Advanced</span><span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px"><i class="ti ti-clock" style="font-size:11px"></i> 10 min read</span></div>
+    </div>
+    <div class="education-card" onclick="learnTopic('Explain LTCG and STCG tax on stocks and mutual funds in India as of 2024-25. What are the rates, exemptions and how to save on capital gains tax legally?')">
+      <div class="edu-title">LTCG & STCG tax on stocks in India</div>
+      <div class="edu-desc">Capital gains tax rules, rates, and how to minimize your tax liability</div>
+      <div class="edu-meta"><span class="pill pill-red">Tax</span><span style="font-size:11px;color:var(--color-text-secondary);margin-left:8px"><i class="ti ti-clock" style="font-size:11px"></i> 7 min read</span></div>
+    </div>
+
+    <div class="chat-wrap" id="learn-chat-wrap" style="display:none;margin-top:12px">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)">
+        <span style="font-size:12px;font-weight:500" id="learn-topic-title">Learning...</span>
+        <button onclick="document.getElementById('learn-chat-wrap').style.display='none'" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:14px"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="chat-msgs" id="learn-msgs" style="min-height:150px"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function nav(id,btn){
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('pane-'+id).classList.add('on');
+}
+function mTab(id,btn){
+  btn.closest('.pane').querySelectorAll('.t2b').forEach(b=>b.classList.remove('on'));
+  btn.closest('.pane').querySelectorAll('.sub-pane').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('mp-'+id).classList.add('on');
+}
+function toolTab(id,btn){
+  btn.closest('.pane').querySelectorAll('.t2b').forEach(b=>b.classList.remove('on'));
+  btn.closest('.pane').querySelectorAll('.sub-pane').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tp-'+id).classList.add('on');
+}
+function tC(el){el.classList.toggle('on');}
+function toggleSite(el){el.classList.toggle('sel');}
+function fq(btn){document.getElementById('qi').value=btn.textContent;document.getElementById('qi').focus();}
+function showAddForm(){document.getElementById('add-form').style.display='block';}
+
+function getSources(){
+  return Array.from(document.querySelectorAll('.chip.on')).map(c=>c.textContent).join(', ') || 'Moneycontrol, Bloomberg, NSE India';
+}
+
+async function callAI(userMsg, sysPrompt, targetEl, thinkingEl){
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:sysPrompt,
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    const d=await r.json();
+    const txt=d.content?.map(i=>i.text||'').join('')||'Could not get a response.';
+    if(thinkingEl)thinkingEl.remove();
+    const div=document.createElement('div');
+    div.className='msg bot';
+    div.innerHTML=txt.replace(/\n/g,'<br>');
+    targetEl.appendChild(div);
+    targetEl.scrollTop=targetEl.scrollHeight;
+  }catch(e){
+    if(thinkingEl)thinkingEl.textContent='Error — please try again.';
+  }
+}
+
+async function sendQ(){
+  const input=document.getElementById('qi');
+  const q=input.value.trim();
+  if(!q)return;
+  input.value='';
+  const msgs=document.getElementById('msgs');
+  const src=getSources();
+  msgs.innerHTML+=`<div class="msg user">${q}</div>`;
+  const loader=document.createElement('div');
+  loader.className='msg thinking';
+  loader.textContent='Analyzing across '+src+'...';
+  msgs.appendChild(loader);
+  msgs.scrollTop=msgs.scrollHeight;
+  const sys=`You are FinAdvisor AI, an expert financial advisor covering Indian and US stock markets. Data sources active: ${src}.
+Rules:
+- Give sharp, actionable insights grounded in Indian context (NIFTY, SEBI, RBI, NSE, BSE, ₹) and US context (S&P 500, Fed, SEC, $) as relevant
+- Reference specific sources from: ${src} when applicable
+- Use plain text only — no markdown asterisks, no headers with # symbols
+- Be concise (under 180 words), structured with line breaks
+- For stock advice: mention sector, risk level, and time horizon
+- Always end: "Note: This is educational information, not personal financial advice. Consult a SEBI-registered advisor."`;
+  await callAI(q,sys,msgs,loader);
+}
+
+async function learnTopic(topic){
+  document.getElementById('learn-chat-wrap').style.display='block';
+  document.getElementById('learn-topic-title').textContent=topic.split('?')[0].substring(0,60)+'...';
+  const msgs=document.getElementById('learn-msgs');
+  msgs.innerHTML='';
+  const loader=document.createElement('div');
+  loader.className='msg thinking';
+  loader.textContent='Preparing lesson...';
+  msgs.appendChild(loader);
+  msgs.scrollTop=msgs.scrollHeight;
+  const sys=`You are a financial educator specializing in Indian markets with knowledge of US markets. Explain the topic clearly for Indian retail investors. Use plain text, no markdown, no asterisks. Use ₹ for Indian currency examples. Structure with line breaks between points. Around 200 words. End with one practical takeaway.`;
+  await callAI(topic,sys,msgs,loader);
+}
+
+function addToWatchlist(){
+  const inp=document.getElementById('wl-input');
+  const sym=inp.value.trim().toUpperCase();
+  if(!sym)return;
+  const list=document.getElementById('wl-list');
+  list.innerHTML+=`<div class="watchlist-row"><div class="wl-name">${sym}</div><div class="wl-price" style="color:var(--color-text-secondary);font-size:12px">Tap to refresh</div></div>`;
+  inp.value='';
+}
+
+function addHolding(){
+  const name=document.getElementById('h-name').value.trim();
+  const sym=document.getElementById('h-sym').value.trim().toUpperCase();
+  const type=document.getElementById('h-type').value;
+  const qty=parseFloat(document.getElementById('h-qty').value)||0;
+  const price=parseFloat(document.getElementById('h-price').value)||0;
+  if(!name||!qty||!price)return;
+  const val=qty*price;
+  const initials=name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const colors=[['#E1F5EE','#085041'],['#E6F1FB','#0C447C'],['#EEEDFE','#3C3489'],['#FAEEDA','#633806']];
+  const c=colors[Math.floor(Math.random()*colors.length)];
+  const row=`<div class="port-row"><div class="port-icon" style="background:${c[0]};color:${c[1]}">${initials}</div><div><div class="port-name">${name}</div><div class="port-type">${qty} ${type==='Mutual Fund'?'units':'shares'} · ${type} · NSE</div></div><div class="port-right"><div class="port-val">₹${val.toLocaleString('en-IN')}</div><div class="port-chg" style="font-size:11px;color:var(--color-text-secondary)">Avg ₹${price.toLocaleString('en-IN')}</div></div></div>`;
+  document.getElementById('holdings').innerHTML+=row;
+  document.getElementById('add-form').style.display='none';
+  ['h-name','h-sym','h-qty','h-price'].forEach(id=>document.getElementById(id).value='');
+}
+
+function fmt(v){
+  if(v>=10000000)return '₹'+(v/10000000).toFixed(1)+'Cr';
+  if(v>=100000)return '₹'+(v/100000).toFixed(1)+'L';
+  if(v>=1000)return '₹'+(v/1000).toFixed(1)+'K';
+  return '₹'+Math.round(v).toLocaleString('en-IN');
+}
+
+function calcSip(){
+  const amt=+document.getElementById('s-amt').value;
+  const rate=+document.getElementById('s-rate').value;
+  const yr=+document.getElementById('s-yr').value;
+  document.getElementById('s-amtv').textContent='₹'+amt.toLocaleString('en-IN');
+  document.getElementById('s-ratev').textContent=rate+'%';
+  document.getElementById('s-yrv').textContent=yr+' yrs';
+  const n=yr*12,r=rate/100/12;
+  const fv=amt*((Math.pow(1+r,n)-1)/r)*(1+r);
+  const inv=amt*n;
+  document.getElementById('s-corpus').textContent=fmt(fv);
+  document.getElementById('s-inv').textContent=fmt(inv);
+  document.getElementById('s-gain').textContent=fmt(fv-inv);
+  if(window.sipCh){window.sipCh.destroy();}
+  const labels=[];const invData=[];const corpData=[];
+  for(let y=1;y<=yr;y++){const nn=y*12;const fvv=amt*((Math.pow(1+r,nn)-1)/r)*(1+r);labels.push(y+'y');invData.push(Math.round(amt*nn));corpData.push(Math.round(fvv));}
+  window.sipCh=new Chart(document.getElementById('sipChart'),{type:'line',data:{labels,datasets:[{label:'Invested',data:invData,borderColor:'#B4B2A9',tension:.3,pointRadius:0,fill:false},{label:'Corpus',data:corpData,borderColor:'#1D9E75',tension:.3,pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888780',font:{size:10}}},y:{ticks:{color:'#888780',font:{size:10},callback:v=>fmt(v)}}}}});
+}
+
+function calcLump(){
+  const amt=+document.getElementById('l-amt').value;
+  const rate=+document.getElementById('l-rate').value;
+  const yr=+document.getElementById('l-yr').value;
+  document.getElementById('l-amtv').textContent=fmt(amt);
+  document.getElementById('l-ratev').textContent=rate+'%';
+  document.getElementById('l-yrv').textContent=yr+' yrs';
+  const fv=amt*Math.pow(1+rate/100,yr);
+  document.getElementById('l-corpus').textContent=fmt(fv);
+  document.getElementById('l-inv').textContent=fmt(amt);
+  document.getElementById('l-gain').textContent=fmt(fv-amt);
+}
+
+function calcEmi(){
+  const p=+document.getElementById('e-amt').value;
+  const r=+document.getElementById('e-rate').value/100/12;
+  const n=+document.getElementById('e-yr').value*12;
+  document.getElementById('e-amtv').textContent=fmt(p);
+  document.getElementById('e-ratev').textContent=(+document.getElementById('e-rate').value).toFixed(1)+'%';
+  document.getElementById('e-yrv').textContent=document.getElementById('e-yr').value+' yrs';
+  const emi=p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+  const total=emi*n;
+  document.getElementById('e-emi').textContent='₹'+Math.round(emi).toLocaleString('en-IN');
+  document.getElementById('e-total').textContent=fmt(total);
+  document.getElementById('e-int').textContent=fmt(total-p);
+}
+
+function calcTax(){
+  const inc=+document.getElementById('t-inc').value;
+  const c80=+document.getElementById('t-80c').value;
+  const hra=+document.getElementById('t-hra').value;
+  document.getElementById('t-incv').textContent=fmt(inc);
+  document.getElementById('t-80cv').textContent=fmt(c80);
+  document.getElementById('t-hrav').textContent=fmt(hra);
+  const taxable=Math.max(0,inc-c80-hra-50000);
+  let tax=0;
+  if(taxable>1500000)tax=187500+(taxable-1500000)*0.30;
+  else if(taxable>1200000)tax=90000+(taxable-1200000)*0.20;
+  else if(taxable>900000)tax=45000+(taxable-900000)*0.15;
+  else if(taxable>600000)tax=15000+(taxable-600000)*0.10;
+  else if(taxable>300000)tax=(taxable-300000)*0.05;
+  const eff=inc>0?(tax/inc*100):0;
+  document.getElementById('t-taxable').textContent=fmt(taxable);
+  document.getElementById('t-tax').textContent=fmt(tax);
+  document.getElementById('t-eff').textContent=eff.toFixed(1)+'%';
+}
+
+function clkUpdate(){
+  const now=new Date();
+  document.getElementById('clk').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+setInterval(clkUpdate,1000);clkUpdate();
+
+setTimeout(()=>{
+  new Chart(document.getElementById('niftyChart'),{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:[24400,24520,24390,24610,24780,24700,24853],borderColor:'#1D9E75',tension:.4,pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#888780',font:{size:10}}},y:{ticks:{color:'#888780',font:{size:10}}}}}});
+  new Chart(document.getElementById('sentChart'),{type:'doughnut',data:{labels:['Bullish','Neutral','Bearish'],datasets:[{data:[52,28,20],backgroundColor:['#1D9E75','#B4B2A9','#E24B4A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{display:false}}}});
+  new Chart(document.getElementById('allocChart'),{type:'doughnut',data:{labels:['Mutual Funds','Equity','Other'],datasets:[{data:[48,42,10],backgroundColor:['#1D9E75','#378ADD','#B4B2A9'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:11},color:'#888780',boxWidth:10,padding:12}}}}});
+  calcSip();calcLump();calcEmi();calcTax();
+},100);
+</script>
